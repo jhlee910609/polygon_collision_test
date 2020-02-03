@@ -13,6 +13,19 @@
 ### 1. index.ts 파일 수정
 
 - 기존 `index.js` 파일을 `index.ts` 파일로 컨버팅
+
   - 최대한 속도 내어 작업
   - `var` 제거
-  - `SVGElement typescript`에 적용
+  - 
+
+  
+
+### 20200204
+
+- ` SVGElement typescript`에 적용
+- `pgon` points 못 찾는 부분 수정
+
+
+
+  
+
