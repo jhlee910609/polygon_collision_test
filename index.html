@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<svg id="mySVG" width="400" height="400" onmousedown="startDrag(evt)" onmousemove="drag(evt)" onmouseup="endDrag()">
+
+    <g id="pgonG" display="none">
+    </g>
+
+    <path style="cursor:move" class="dragTarget" id="myPath" fill="violet" stroke-width="2" stroke="black"
+          d="M10 80 C 40 10, 65 10, 95 80 S 150 150, 180 80">
+    </path>
+
+    <ellipse style="cursor:move" class="dragTarget" id="myEllipse" cx="320" cy="335" rx="40" ry="20" fill="green"
+             stroke-width="2" stroke="black">
+    </ellipse>
+
+    <circle style="cursor:move" class="dragTarget" id="myCircle" cx="80" cy="330" r="30" fill="blue" stroke-width="2"
+            stroke="black">
+    </circle>
+
+    <rect style="cursor:move" class="dragTarget" id="myRect" x="250" y="40" width="50" height="30" fill="maroon"
+          stroke-width="2" stroke="black">
+    </rect>
+
+    <polygon style="cursor:move" transform="translate(-160,-100)skewX(20)skewY(30)" class="dragTarget" id="myPolygon"
+             stroke="black" fill="darkorange" stroke-width="2"
+             points="223.776 267.725 247.553 244.549 214.695 239.775 200 210 185.305 239.775 152.447 244.549 176.224 267.725 170.611 300.451 200 285 229.389 300.451">
+    </polygon>
+
+    <polyline style="cursor:move" class="dragTarget" id="myPolyline" fill="red" points="200,100 266,100 133,170 200,170"
+              stroke-width="2" stroke="black">
+    </polyline>
+
+    <text style="cursor:move" class="dragTarget" id="myText" text-anchor="middle" fill="red" stroke="black"
+          stroke-width="1" x="300" y="200" font-size="30">
+        This is text
+    </text>
+</svg>
+<script src="./index.js" type="text/javascript">
+</script>
+</body>
+</html>
