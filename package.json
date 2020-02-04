@@ -1,0 +1,20 @@
+{
+  "name": "polygon_collision_test",
+  "version": "1.0.0",
+  "description": "1. typescript로 문법 변경\r 2. 설명 (충돌 로직)\r 3. 어디까지 기능 구현 가능한지 ex) 회전, 확대/축소 등",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhlee910609/polygon_collision_test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jhlee910609/polygon_collision_test/issues"
+  },
+  "homepage": "https://github.com/jhlee910609/polygon_collision_test#readme"
+}
