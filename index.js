@@ -7,12 +7,77 @@ var Dragging = false;
 var DragStartGrabX = 0;
 var DragStartGrabY = 0;
 var DragChildrenPoints = [];
-// <g> tag
+// <g> tag 바인딩
 var pgonG = document.getElementById('pgonG');
+// HTML 태그에 직접 바인딩 되어 있음
+// 요소 드래그 시, 동작
+function startDrag(evt) {
+    //---prevents dragging conflicts on other draggable elements---
+    if (!Dragging) {
+        if (evt.target.getAttribute("class") == "dragTarget") {
+            DragTarget = evt.target;
+            //---clear previous---
+            for (var k = pgonG.childNodes.length - 1; k >= 0; k--) {
+                pgonG.removeChild(pgonG.childNodes.item(k));
+            }
+            DragTarget.setAttribute("opacity", 1 + '');
+            setTimeout(function () { return getDragParentChildren(DragTarget); }, 500);
+            //---reference point to its respective viewport--
+            var pnt = DragTarget.ownerSVGElement.createSVGPoint();
+            pnt.x = evt.clientX;
+            pnt.y = evt.clientY;
+            //---elements transformed and/or in different(svg) viewports---
+            var sCTM = DragTarget.getScreenCTM();
+            var Pnt = pnt.matrixTransform(sCTM.inverse());
+            TransformRequestObj = DragTarget.ownerSVGElement.createSVGTransform();
+            //---attach new or existing transform to element, init its transform list---
+            var myTransListAnim = DragTarget.transform;
+            TransList = myTransListAnim.baseVal;
+            //---the point on the element to grab as its dragging point---
+            DragStartGrabX = Pnt.x;
+            DragStartGrabY = Pnt.y;
+            Dragging = true;
+        }
+    }
+}
+// 드래그 시, 동작
+// 충돌 검사 이쪽에 있음
+function drag(evt) {
+    if (Dragging) {
+        var pnt = DragTarget.ownerSVGElement.createSVGPoint();
+        pnt.x = evt.clientX;
+        pnt.y = evt.clientY;
+        //---elements in different(svg) viewports, and/or transformed ---
+        var sCTM = DragTarget.getScreenCTM();
+        var Pnt = pnt.matrixTransform(sCTM.inverse());
+        Pnt.x -= DragStartGrabX;
+        Pnt.y -= DragStartGrabY;
+        TransformRequestObj.setTranslate(Pnt.x, Pnt.y);
+        TransList.appendItem(TransformRequestObj);
+        TransList.consolidate();
+        // 충돌 검사 시작.
+        getCollisions(DragTarget, Pnt.x, Pnt.y);
+    }
+}
+//--mouse up---
+function endDrag() {
+    Dragging = false;
+}
+function rotateAll() {
+    // 모든 요소 바인딩
+    var allElements = document.body.getElementsByTagName("*");
+    for (var i = 0; i < allElements.length; i++) {
+        if (!(i === 0 && allElements.length - 1)) {
+            // allElements[i].setAttribute('transform', 'translate(100,100)');
+            allElements[i].setAttribute('transform', 'rotate(45, 100, 100)');
+        }
+    }
+}
 function getDragParentChildren(DragTarget) {
     //----set Parent/Children Polygons---
     PolygonDragParent = [];
     PolygonDragChildren = [];
+    // 모든 요소 바인딩
     var myRect = document.getElementById('myRect');
     var myEllipse = document.getElementById('myEllipse');
     var myCircle = document.getElementById('myCircle');
@@ -20,6 +85,8 @@ function getDragParentChildren(DragTarget) {
     var myPath = document.getElementById('myPath');
     var myText = document.getElementById('myText');
     var myPolyline = document.getElementById('myPolyline');
+    // DragTarget = parent
+    // !DragTarget = child
     if (DragTarget.nodeName == "circle") {
         circle2Polygon(myCircle, "parent");
     }
@@ -88,66 +155,13 @@ function getDragParentChildren(DragTarget) {
         }
     }
 }
-// 요소 드래그 시, 동장
-function startDrag(evt) {
-    //---prevents dragging conflicts on other draggable elements---
-    if (!Dragging) {
-        if (evt.target.getAttribute("class") == "dragTarget") {
-            DragTarget = evt.target;
-            //---clear previous---
-            for (var k = pgonG.childNodes.length - 1; k >= 0; k--) {
-                console.log("k", pgonG.childNodes.item(k));
-                pgonG.removeChild(pgonG.childNodes.item(k));
-            }
-            DragTarget.setAttribute("opacity", 1 + '');
-            setTimeout(function () { return getDragParentChildren(DragTarget); }, 500);
-            //---reference point to its respective viewport--
-            var pnt = DragTarget.ownerSVGElement.createSVGPoint();
-            pnt.x = evt.clientX;
-            pnt.y = evt.clientY;
-            //---elements transformed and/or in different(svg) viewports---
-            var sCTM = DragTarget.getScreenCTM();
-            var Pnt = pnt.matrixTransform(sCTM.inverse());
-            TransformRequestObj = DragTarget.ownerSVGElement.createSVGTransform();
-            //---attach new or existing transform to element, init its transform list---
-            var myTransListAnim = DragTarget.transform;
-            TransList = myTransListAnim.baseVal;
-            //---the point on the element to grab as its dragging point---
-            DragStartGrabX = Pnt.x;
-            DragStartGrabY = Pnt.y;
-            Dragging = true;
-        }
-    }
-}
-// 마우스 움직일 떄,
-function drag(evt) {
-    if (Dragging) {
-        var pnt = DragTarget.ownerSVGElement.createSVGPoint();
-        pnt.x = evt.clientX;
-        pnt.y = evt.clientY;
-        //---elements in different(svg) viewports, and/or transformed ---
-        var sCTM = DragTarget.getScreenCTM();
-        var Pnt = pnt.matrixTransform(sCTM.inverse());
-        Pnt.x -= DragStartGrabX;
-        Pnt.y -= DragStartGrabY;
-        TransformRequestObj.setTranslate(Pnt.x, Pnt.y);
-        TransList.appendItem(TransformRequestObj);
-        TransList.consolidate();
-        // 충돌 검사 시작.
-        getCollisions(DragTarget, Pnt.x, Pnt.y);
-    }
-}
-//--mouse up---
-function endDrag() {
-    Dragging = false;
-}
-//---dragging---
+// 그래그 중의 충돌 검사
 function getCollisions(DragTarget, transX, transY) {
     var collide = false;
+    // 충돌한 요소 저장
     var collidedElems = [];
     for (var k = 0; k < PolygonDragParent.length; k++) {
         var pgonParent = PolygonDragParent[k];
-        console.log('pgonParent', k, pgonParent.ownerSVGElement);
         var shapeParent = pgonParent.id;
         if (DragTarget.nodeName == "polygon")
             setTargetPnts(pgonParent, DragTarget);
@@ -186,7 +200,7 @@ function getCollisions(DragTarget, transX, transY) {
                     if (collidedElems.toString().indexOf(id) == -1)
                         collidedElems.push(id);
                 }
-                else if (child.getAttribute("opacity", .4)) {
+                else if (child.getAttribute("opacity") === '.4') {
                     for (var ce = 0; ce < collidedElems.length; ce++) {
                         var ceId = collidedElems[ce];
                         if (ceId == id) {
@@ -211,17 +225,18 @@ function getCollisions(DragTarget, transX, transY) {
 //---remove transform, create screen points for polygon---
 function ctmPolygon(myPoly) {
     var ctm = myPoly.getCTM();
-    // ts로 하니 null일 때가 발생
     var svgRoot = myPoly.ownerSVGElement;
     var pointsList = myPoly.points;
     var n = pointsList.numberOfItems;
-    for (var m = 0; m < n; m++) {
-        var mySVGPoint = svgRoot.createSVGPoint();
-        mySVGPoint.x = pointsList.getItem(m).x;
-        mySVGPoint.y = pointsList.getItem(m).y;
-        var mySVGPointTrans = mySVGPoint.matrixTransform(ctm);
-        pointsList.getItem(m).x = mySVGPointTrans.x;
-        pointsList.getItem(m).y = mySVGPointTrans.y;
+    if (svgRoot) {
+        for (var m = 0; m < n; m++) {
+            var mySVGPoint = svgRoot.createSVGPoint();
+            mySVGPoint.x = pointsList.getItem(m).x;
+            mySVGPoint.y = pointsList.getItem(m).y;
+            var mySVGPointTrans = mySVGPoint.matrixTransform(ctm);
+            pointsList.getItem(m).x = mySVGPointTrans.x;
+            pointsList.getItem(m).y = mySVGPointTrans.y;
+        }
     }
     myPoly.removeAttribute("transform");
 }

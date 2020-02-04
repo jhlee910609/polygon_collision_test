@@ -33,7 +33,7 @@ function startDrag(evt) {
 
             TransformRequestObj = DragTarget.ownerSVGElement.createSVGTransform()
             //---attach new or existing transform to element, init its transform list---
-            var myTransListAnim = DragTarget.transform
+            var myTransListAnim = DragTarget.transform;
             TransList = myTransListAnim.baseVal
 
 
@@ -146,28 +146,27 @@ function getCollisions(DragTarget, transX, transY) {
     var collidedElems = [];
     for (var k = 0; k < PolygonDragParent.length; k++) {
         var pgonParent = PolygonDragParent[k];
-        console.log('pgonParent', k, pgonParent.ownerSVGElement);
-
         var shapeParent = pgonParent.id;
         if (DragTarget.nodeName === "polygon")
             setTargetPnts(pgonParent, DragTarget);
         else {
+            console.log("pgonParent", pgonParent);
             pgonParent.setAttribute("transform", "translate(" + transX + " " + transY + ")")
             ctmPolygon(pgonParent)
         }
 
-        var aPoints = pgonParent.points
-        var m = aPoints.numberOfItems
+        var aPoints = pgonParent.points;
+        var m = aPoints.numberOfItems;
 
         //---ignore 'close' leg of polygon---
         if (shapeParent.indexOf("pgonPolyline") != -1 || shapeParent == "pgonLine" || shapeParent == "pgonPathOpen" || shapeParent == "pgonPathOpenSmooth")
-            minusA = -1
+            minusA = -1;
         else
-            minusA = 0
+            minusA = 0;
 
         for (var i = 0; i < m + minusA; i++) {
-            var aX1 = aPoints.getItem(i).x
-            var aY1 = aPoints.getItem(i).y
+            var aX1 = aPoints.getItem(i).x;
+            var aY1 = aPoints.getItem(i).y;
 
             if (i < m - 1) {
                 var aX2 = aPoints.getItem(i + 1).x
@@ -186,7 +185,7 @@ function getCollisions(DragTarget, transX, transY) {
                     child.setAttribute("opacity", .4)
                     if (collidedElems.toString().indexOf(id) == -1)
                         collidedElems.push(id)
-                } else if (child.getAttribute("opacity" == ".4")) {
+                } else if (child.getAttribute("opacity" === ".4")) {
                     for (ce = 0; ce < collidedElems.length; ce++) {
                         var ceId = collidedElems[ce]
                         if (ceId == id) {
